@@ -1,0 +1,8 @@
+anim/
+build/
+dist/
+nbproject/
+.dep.inc
+rtbyte
+Makefile
+main.cpp
