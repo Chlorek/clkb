@@ -11,26 +11,23 @@
 namespace clkb {
     RandomEffect::RandomEffect(std::vector<KEY> keys, std::chrono::milliseconds duration)
         : LinearEffect(duration), randomColor(0, 255), 
-          from({randomColor(gen), randomColor(gen), randomColor(gen)}), to({randomColor(gen), randomColor(gen), randomColor(gen)}) {
+          from({randomColor(rng), randomColor(rng), randomColor(rng)}), to({randomColor(rng), randomColor(rng), randomColor(rng)}) {
         for(auto k : keys) 
             this->keys.push_back(k.i);
-        gen.seed(std::chrono::system_clock::now().time_since_epoch().count());
     }
     
     RandomEffect::RandomEffect(std::vector<KEY::INDEX_TYPE> keys, std::chrono::milliseconds duration)
         : LinearEffect(duration), keys(keys), randomColor(0, 255), 
-          from({randomColor(gen), randomColor(gen), randomColor(gen)}), to({randomColor(gen), randomColor(gen), randomColor(gen)}) {
-        gen.seed(std::chrono::system_clock::now().time_since_epoch().count());
+          from({randomColor(rng), randomColor(rng), randomColor(rng)}), to({randomColor(rng), randomColor(rng), randomColor(rng)}) {
     }
     
     RandomEffect::RandomEffect(std::chrono::milliseconds duration)
         : LinearEffect(duration), randomColor(0, 255),
-          from({randomColor(gen), randomColor(gen), randomColor(gen)}), to({randomColor(gen), randomColor(gen), randomColor(gen)}) {
-        gen.seed(std::chrono::system_clock::now().time_since_epoch().count());
+          from({randomColor(rng), randomColor(rng), randomColor(rng)}), to({randomColor(rng), randomColor(rng), randomColor(rng)}) {
     }
 
     RandomEffect::RandomEffect(const RandomEffect& o)
-        : LinearEffect(o), keys(o.keys), randomColor(o.randomColor), from(o.from), to(o.to), gen(o.gen) {
+        : LinearEffect(o), keys(o.keys), randomColor(o.randomColor), from(o.from), to(o.to) {
     }
     
     RandomEffect::~RandomEffect() {
@@ -46,7 +43,7 @@ namespace clkb {
         
         if(progress == 1) {
             from = to;
-            to = {randomColor(gen), randomColor(gen), randomColor(gen)};
+            to = {randomColor(rng), randomColor(rng), randomColor(rng)};
         }
     }
 }

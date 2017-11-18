@@ -9,6 +9,7 @@
 #define EFFECT_HPP
 
 #include "DataTypes.hpp"
+#include <random>
 
 namespace clkb {
     class DeviceController;
@@ -22,7 +23,8 @@ namespace clkb {
             virtual void tick(DeviceController* dvct) = 0;
             
             static RGB lerp(RGB a, RGB b, float weight);
-        private:
+        protected:
+            static std::default_random_engine rng;
     };
 }
 

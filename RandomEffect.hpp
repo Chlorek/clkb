@@ -24,8 +24,6 @@ namespace clkb {
             void render(DeviceController* dvct, float progress);
         private:
             std::vector<KEY::INDEX_TYPE> keys;
-            
-            std::default_random_engine gen;
             std::uniform_int_distribution<RGB::TYPE> randomColor;
             
             RGB from, to;

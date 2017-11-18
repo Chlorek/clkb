@@ -12,11 +12,10 @@
 namespace clkb {
     RaindropsEffect::RaindropsEffect(unsigned char maxDrops, std::chrono::milliseconds duration, RGB color) 
         : maxDrops(maxDrops), randX(0, 19), randY(0, 5), randDelay(0, 1000), duration(duration), color(color) {
-        gen.seed(std::chrono::system_clock::now().time_since_epoch().count());
     }
 
     RaindropsEffect::RaindropsEffect(const RaindropsEffect& o)
-        : maxDrops(o.maxDrops), duration(o.duration), gen(o.gen), randX(o.randX), randY(o.randY), randDelay(o.randDelay), color(color) {
+        : maxDrops(o.maxDrops), duration(o.duration), randX(o.randX), randY(o.randY), randDelay(o.randDelay), color(color) {
     }
 
     RaindropsEffect::~RaindropsEffect() {
@@ -34,7 +33,7 @@ namespace clkb {
                 progress = (2.f - progress);
             if(progress < 0)
                 progress = 0;
-            if(progress > 1)
+            else if(progress > 1)
                 progress = 1;
             //std::cout << progress << std::endl;
 
@@ -61,6 +60,6 @@ namespace clkb {
         
         // add raindrops
         while(drops.size() < maxDrops)
-            drops.push_back({std::chrono::system_clock::now() + std::chrono::milliseconds(randDelay(gen)), randX(gen), randY(gen)});
+            drops.push_back({std::chrono::system_clock::now() + std::chrono::milliseconds(randDelay(rng)), randX(rng), randY(rng)});
     }
 }

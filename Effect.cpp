@@ -9,6 +9,8 @@
 #include "DeviceController.hpp"
 
 namespace clkb {
+    std::default_random_engine Effect::rng(std::chrono::system_clock::now().time_since_epoch().count());
+    
     Effect::Effect() {
     }
 
