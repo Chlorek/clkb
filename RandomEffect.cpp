@@ -38,7 +38,7 @@ namespace clkb {
     }
 
     RandomEffect::RandomEffect(const RandomEffect& o) : keys(o.keys), last(o.last), duration(o.duration), randomColor(o.randomColor),
-        from(o.from), to(o.to) {
+        from(o.from), to(o.to), gen(o.gen) {
     }
     
     RandomEffect::~RandomEffect() {
