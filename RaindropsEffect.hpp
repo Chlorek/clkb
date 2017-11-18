@@ -35,6 +35,7 @@ namespace clkb {
             
             std::default_random_engine gen;
             std::uniform_int_distribution<unsigned char> randX, randY;
+            std::uniform_int_distribution<unsigned short> randDelay;
     };
 }
 
