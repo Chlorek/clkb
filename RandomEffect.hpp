@@ -8,12 +8,12 @@
 #ifndef RANDOMEFFECT_HPP
 #define RANDOMEFFECT_HPP
 
-#include "Effect.hpp"
+#include "LinearEffect.hpp"
 #include <vector>
 #include <random>
 
 namespace clkb {
-    class RandomEffect : public Effect {
+    class RandomEffect : public LinearEffect {
         public:
             RandomEffect(std::vector<KEY> keys, std::chrono::milliseconds duration);
             RandomEffect(std::vector<KEY::INDEX_TYPE> keys, std::chrono::milliseconds duration);
@@ -21,10 +21,8 @@ namespace clkb {
             RandomEffect(const RandomEffect& orig);
             virtual ~RandomEffect();
             
-            void tick(DeviceController* dvct);
+            void render(DeviceController* dvct, float progress);
         private:
-            time_point last;
-            std::chrono::milliseconds duration;
             std::vector<KEY::INDEX_TYPE> keys;
             
             std::default_random_engine gen;
