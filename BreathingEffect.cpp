@@ -12,27 +12,21 @@
 
 namespace clkb {
     BreathingEffect::BreathingEffect(std::vector<KEY> keys, std::chrono::milliseconds duration, const RGB col)
-        : last(std::chrono::system_clock::now()), duration(duration), keys(keys), col(col) {
+        : LinearEffect(duration), keys(keys), col(col) {
     }
     
     BreathingEffect::BreathingEffect(std::chrono::milliseconds duration, const RGB col)
-        : last(std::chrono::system_clock::now()), duration(duration), col(col) {
+        : LinearEffect(duration), col(col) {
     }
 
-    BreathingEffect::BreathingEffect(const BreathingEffect& o) : keys(o.keys), last(o.last), duration(o.duration), col(o.col) {
+    BreathingEffect::BreathingEffect(const BreathingEffect& o) : LinearEffect(o), keys(o.keys), col(o.col) {
     }
 
     BreathingEffect::~BreathingEffect() {
     }
     
-    void BreathingEffect::tick(DeviceController* dvct) {
-        auto diff = std::chrono::system_clock::now() - last;
-        if(diff >= duration) {
-            last = std::chrono::system_clock::now();
-            diff = duration;
-        }
-        
-        float progress = (float)std::chrono::duration_cast<std::chrono::milliseconds>(diff).count() / duration.count() * 2;
+    void BreathingEffect::render(DeviceController* dvct, float progress) {
+        progress *= 2;
         if(progress > 1)
             progress = (2.f - progress);
         

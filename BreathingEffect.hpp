@@ -8,11 +8,11 @@
 #ifndef BREATHINGEFFECT_HPP
 #define BREATHINGEFFECT_HPP
 
-#include "Effect.hpp"
+#include "LinearEffect.hpp"
 #include <vector>
 
 namespace clkb {
-    class BreathingEffect : public Effect {
+    class BreathingEffect : public LinearEffect {
         public:
             BreathingEffect() = delete;
             BreathingEffect(std::vector<KEY> keys, std::chrono::milliseconds duration, const RGB col);
@@ -20,10 +20,8 @@ namespace clkb {
             BreathingEffect(const BreathingEffect& orig);
             virtual ~BreathingEffect();
             
-            void tick(DeviceController* dvct);
+            void render(DeviceController* dvct, float progress);
         private:
-            time_point last;
-            std::chrono::milliseconds duration;
             std::vector<KEY> keys;
             const RGB col;
     };
