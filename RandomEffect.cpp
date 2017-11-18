@@ -9,14 +9,6 @@
 #include "DeviceController.hpp"
 
 namespace clkb {
-    inline static RGB lerp(RGB a, RGB b, float weight) {
-        return {
-                   a.r*(1-weight) + b.r*weight,
-                   a.g*(1-weight) + b.g*weight,
-                   a.b*(1-weight) + b.b*weight
-               };
-    }
-    
     RandomEffect::RandomEffect(std::vector<KEY> keys, std::chrono::milliseconds duration)
         : last(std::chrono::system_clock::now()), duration(duration), randomColor(0, 255),
         from({randomColor(gen), randomColor(gen), randomColor(gen)}), to({randomColor(gen), randomColor(gen), randomColor(gen)}) {
@@ -58,9 +50,9 @@ namespace clkb {
         
         if(keys.size() > 0)
             for(auto k : keys)
-                dvct->setColor(k, lerp(from, to, progress));
+                dvct->setColor(k, Effect::lerp(from, to, progress));
         else
-            dvct->setColor(lerp(from, to, progress));
+            dvct->setColor(Effect::lerp(from, to, progress));
         
         if(diff == duration) {
             from = to;

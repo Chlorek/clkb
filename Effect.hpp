@@ -20,6 +20,8 @@ namespace clkb {
             virtual ~Effect();
             
             virtual void tick(DeviceController* dvct) = 0;
+            
+            static RGB lerp(RGB a, RGB b, float weight);
         private:
     };
 }
