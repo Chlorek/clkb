@@ -40,4 +40,11 @@ namespace clkb {
         {{KEY::LSHIFT}, {KEY::Z}, {KEY::X}, {KEY::C}, {KEY::V}, {KEY::B}, {KEY::N}, {KEY::M}, {KEY::COMMA}, {KEY::DOT}, {KEY::SLASH}, {}, {KEY::RSHIFT}, {}, {KEY::UP}, {}, {KEY::NUM_1}, {KEY::NUM_2}, {KEY::NUM_3}, {KEY::NUM_ENTER}},
         {{KEY::LCTRL}, {KEY::LSUPER, KEY::LALT}, {}, {}, {}, {KEY::SPACE}, {}, {}, {}, {KEY::RALT}, {KEY::RSUPER}, {KEY::MENU}, {KEY::RCTRL}, {KEY::LEFT}, {KEY::DOWN}, {KEY::RIGHT}, {KEY::NUM_0}, {}, {KEY::NUM_DOT}, {}}
     };
+    
+    std::vector<KEY> KEY::fromKeymap(unsigned char x, unsigned char y) {
+        if(y < 6)
+            if(x < 20)
+                return KEY::keymap[y][x];
+        return {};
+    }
 }

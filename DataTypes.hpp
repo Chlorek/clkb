@@ -56,6 +56,8 @@ namespace clkb {
             static INDEX_TYPE count;
             static std::vector<KEY> keymap[6][20];
             //KEY operator[] (INDEX_TYPE i);
+            
+            static std::vector<KEY> fromKeymap(unsigned char x, unsigned char y);
         private:
             KEY() = delete;
             KEY(const char* name);
