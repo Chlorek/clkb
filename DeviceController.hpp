@@ -95,6 +95,8 @@ namespace clkb {
             
             RGB getColor(KEY::INDEX_TYPE key);
             
+            RGB getBackgroundColor();
+            
             /*
              * Returns list of connected devices
              */

@@ -117,6 +117,10 @@ namespace clkb {
         return colors[key];
     }
     
+    RGB DeviceController::getBackgroundColor() {
+        return bgcolor;
+    }
+    
     std::vector<DeviceInfo> DeviceController::getDevices() {
         int dev = open("/dev/input/ckb0/connected", O_RDONLY | O_NONBLOCK);
         if(dev < 0)
