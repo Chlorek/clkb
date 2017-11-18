@@ -12,20 +12,16 @@
 #include <boost/algorithm/string.hpp>
 
 namespace clkb {
-    DeviceController::DeviceController(FileDevice* fd, unsigned char framerate) : fd(fd), timestep(1000/framerate) {
-        last_count = std::chrono::system_clock::now();
-        colors = new std::string[KEY::count];
+    DeviceController::DeviceController(FileDevice* fd, unsigned char framerate)
+        : fd(fd), timestep(1000/framerate), last_count(std::chrono::system_clock::now()) {
+        colors = std::shared_ptr<RGB[]>(new RGB[KEY::count]);
     }
 
-    DeviceController::DeviceController(const DeviceController& o) : fd(o.fd), colors(o.colors), bgcolor(o.bgcolor), 
+    DeviceController::DeviceController(const DeviceController& o) : fd(o.fd), colors(o.colors),
             timestep(o.timestep), last_count(o.last_count), frames(o.frames), effects(o.effects) {
-        colors = new std::string[KEY::count];
-        for(KEY::INDEX_TYPE i = 0; i < KEY::count; ++i)
-            colors[i] = o.colors[i];
     }
     
     DeviceController::~DeviceController() {
-        delete[] colors;
     }
 
     void DeviceController::nextFrame() {
@@ -34,13 +30,11 @@ namespace clkb {
             e->tick(this);
         
         // Every command begins with rgb followed by main color
-        std::string cmd("rgb ");
-        cmd += rgbToHex(bgcolor);
+        std::string cmd("rgb");
         
         // Then per-key colors are applied
         for(KEY::INDEX_TYPE i = 0; i < KEY::count; ++i)
-            if(!colors[i].empty())
-                cmd.append(" ").append(KEY::NAME[i]).append(":").append(colors[i]);
+            cmd.append(" ").append(KEY::NAME[i]).append(":").append(rgbToHex(colors[i]));
         
         // debug line
         //std::cout << cmd << std::endl;
@@ -68,47 +62,59 @@ namespace clkb {
 
     void DeviceController::setColor(clkb::RGB color) {
         bgcolor = color;
+        for(KEY::INDEX_TYPE i = 0; i < KEY::count; ++i)
+            setColor(i, color);
     }
     
     void DeviceController::setColor(std::vector<KEY> keys, clkb::RGB color) {
         for(KEY key : keys)
-            colors[key.i] = rgbToHex(color);
+            colors[key.i] = color;
     }
     
     void DeviceController::setColor(std::vector<KEY::INDEX_TYPE> keys, clkb::RGB color) {
         for(KEY::INDEX_TYPE key : keys)
-            colors[key] = rgbToHex(color);
+            colors[key] = color;
     }
     
     void DeviceController::setColor(KEY key, clkb::RGB color) {
-        colors[key.i] = rgbToHex(color);
+        colors[key.i] = color;
     }
     
     void DeviceController::setColor(KEY::INDEX_TYPE key, clkb::RGB color) {
-        colors[key] = rgbToHex(color);
+        colors[key] = color;
     }
     
     void DeviceController::resetColor(std::vector<KEY> keys) {
         for(KEY key : keys)
-            colors[key.i].clear();
+            colors[key.i] = bgcolor;
     }
     
     void DeviceController::resetColor(std::vector<KEY::INDEX_TYPE> keys) {
         for(KEY::INDEX_TYPE key : keys)
-            colors[key].clear();
+            colors[key] = bgcolor;
     }
     
     void DeviceController::resetColor(KEY key) {
-        colors[key.i].clear();
+        colors[key.i] = bgcolor;
     }
     
     void DeviceController::resetColor(KEY::INDEX_TYPE key) {
-        colors[key].clear();
+        colors[key] = bgcolor;
     }
     
     void DeviceController::apply(Effect* effect) {
         std::shared_ptr<Effect> sptr(effect);
         effects.push_back(sptr);
+    }
+    
+    RGB DeviceController::getColor(KEY key) {
+        return getColor(key.i);
+    }
+            
+    RGB DeviceController::getColor(KEY::INDEX_TYPE key) {
+        if(key >= KEY::count)
+            return {0,0,0};
+        return colors[key];
     }
     
     std::vector<DeviceInfo> DeviceController::getDevices() {

@@ -23,7 +23,7 @@ namespace clkb {
      * Resulting c-string is null-terminated.
      */
     static void rgbToHex(clkb::RGB rgb, char* dest);
-    
+
     /*
      * More comfortable C++ version of rgbToHex()
      */
@@ -91,13 +91,17 @@ namespace clkb {
              */
             void apply(Effect* effect);
             
+            RGB getColor(KEY key);
+            
+            RGB getColor(KEY::INDEX_TYPE key);
+            
             /*
              * Returns list of connected devices
              */
             static std::vector<DeviceInfo> getDevices();
         private:
             FileDevice* fd;
-            std::string* colors; //pointer to array
+            std::shared_ptr<RGB[]> colors; // pointer to array
             clkb::RGB bgcolor {0, 0, 0};
             
             // used frame-rate control and counting
