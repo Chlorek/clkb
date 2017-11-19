@@ -7,27 +7,25 @@
 
 #include "RandomEffect.hpp"
 #include "DeviceController.hpp"
+#include "ColorProvider.hpp"
 
 namespace clkb {
-    RandomEffect::RandomEffect(std::vector<KEY> keys, std::chrono::milliseconds duration)
-        : LinearEffect(duration), randomColor(0, 255), 
-          from({randomColor(rng), randomColor(rng), randomColor(rng)}), to({randomColor(rng), randomColor(rng), randomColor(rng)}) {
+    RandomEffect::RandomEffect(std::vector<KEY> keys, std::chrono::milliseconds duration, ColorProvider* provider)
+        : LinearEffect(duration), provider(provider), from(provider->next()), to(provider->next()) {
         for(auto k : keys) 
             this->keys.push_back(k.i);
     }
     
-    RandomEffect::RandomEffect(std::vector<KEY::INDEX_TYPE> keys, std::chrono::milliseconds duration)
-        : LinearEffect(duration), keys(keys), randomColor(0, 255), 
-          from({randomColor(rng), randomColor(rng), randomColor(rng)}), to({randomColor(rng), randomColor(rng), randomColor(rng)}) {
+    RandomEffect::RandomEffect(std::vector<KEY::INDEX_TYPE> keys, std::chrono::milliseconds duration, ColorProvider* provider)
+        : LinearEffect(duration), keys(keys), provider(provider), from(provider->next()), to(provider->next()) {
     }
     
-    RandomEffect::RandomEffect(std::chrono::milliseconds duration)
-        : LinearEffect(duration), randomColor(0, 255),
-          from({randomColor(rng), randomColor(rng), randomColor(rng)}), to({randomColor(rng), randomColor(rng), randomColor(rng)}) {
+    RandomEffect::RandomEffect(std::chrono::milliseconds duration, ColorProvider* provider)
+        : LinearEffect(duration), provider(provider), from(provider->next()), to(provider->next()) {
     }
 
     RandomEffect::RandomEffect(const RandomEffect& o)
-        : LinearEffect(o), keys(o.keys), randomColor(o.randomColor), from(o.from), to(o.to) {
+        : LinearEffect(o), keys(o.keys), provider(provider), from(o.from), to(o.to) {
     }
     
     RandomEffect::~RandomEffect() {
@@ -43,7 +41,7 @@ namespace clkb {
         
         if(progress == 1) {
             from = to;
-            to = {randomColor(rng), randomColor(rng), randomColor(rng)};
+            to = provider->next();
         }
     }
 }
