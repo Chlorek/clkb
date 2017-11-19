@@ -33,8 +33,8 @@ namespace clkb {
             unsigned char maxDrops;
             RGB color;
             
-            std::uniform_int_distribution<unsigned char> randX, randY;
-            std::uniform_int_distribution<unsigned short> randDelay;
+            static std::uniform_int_distribution<unsigned char> randX, randY;
+            static std::uniform_int_distribution<unsigned short> randDelay;
     };
 }
 

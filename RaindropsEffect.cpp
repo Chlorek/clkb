@@ -10,12 +10,15 @@
 #include <iostream>
 
 namespace clkb {
+    std::uniform_int_distribution<unsigned char> RaindropsEffect::randX(0, 19), RaindropsEffect::randY(0, 5);
+    std::uniform_int_distribution<unsigned short> RaindropsEffect::randDelay(0, 1200);
+    
     RaindropsEffect::RaindropsEffect(unsigned char maxDrops, std::chrono::milliseconds duration, RGB color) 
-        : maxDrops(maxDrops), randX(0, 19), randY(0, 5), randDelay(0, 1000), duration(duration), color(color) {
+        : maxDrops(maxDrops), duration(duration), color(color) {
     }
 
     RaindropsEffect::RaindropsEffect(const RaindropsEffect& o)
-        : maxDrops(o.maxDrops), duration(o.duration), randX(o.randX), randY(o.randY), randDelay(o.randDelay), color(color) {
+        : maxDrops(o.maxDrops), duration(o.duration), color(color) {
     }
 
     RaindropsEffect::~RaindropsEffect() {
