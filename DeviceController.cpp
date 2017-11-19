@@ -18,7 +18,7 @@ namespace clkb {
         : fd(fd), timestep(1000/framerate), last_count(std::chrono::system_clock::now()) {
         RGB* bg = new RGB[KEY::count];
         RGB* fg = new RGB[KEY::count];
-        std::fill(bg, bg + KEY::count, RGB{255,0,0});
+        std::fill(bg, bg + KEY::count, RGB{0,0,0});
         std::fill(fg, fg + KEY::count, RGB::NONE);
         colors.push_back(bg); //background
         colors.push_back(fg); //foreground
