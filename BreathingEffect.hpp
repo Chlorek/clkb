@@ -16,13 +16,14 @@ namespace clkb {
         public:
             BreathingEffect() = delete;
             BreathingEffect(std::vector<KEY> keys, std::chrono::milliseconds duration, const RGB col);
+            BreathingEffect(std::vector<KEY::INDEX_TYPE> keys, std::chrono::milliseconds duration, const RGB col);
             BreathingEffect(std::chrono::milliseconds duration, const RGB col);
             BreathingEffect(const BreathingEffect& orig);
             virtual ~BreathingEffect();
             
             void render(DeviceController* dvct, float progress);
         private:
-            std::vector<KEY> keys;
+            std::vector<KEY::INDEX_TYPE> keys;
             const RGB col;
     };
 }
