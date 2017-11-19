@@ -131,6 +131,12 @@ namespace clkb {
             colors[layer][key] = RGB::NONE;
     }
     
+    void DeviceController::resetColor(unsigned int layer) {
+        if(colors.size() > layer)
+            for(KEY::INDEX_TYPE i = 0; i < KEY::count; ++i)
+                colors[layer][i] = RGB::NONE;
+    }
+    
     void DeviceController::apply(Effect* effect) {
         std::shared_ptr<Effect> sptr(effect);
         effects.push_back(sptr);

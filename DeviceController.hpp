@@ -92,6 +92,11 @@ namespace clkb {
             void resetColor(KEY::INDEX_TYPE key, unsigned int layer = (unsigned int)LAYER::FOREGROUND);
             
             /*
+             * Removes color from all keys (sets to RGB::NONE)
+             */
+            void resetColor(unsigned int layer = (unsigned int)LAYER::FOREGROUND);
+            
+            /*
              * If specified layer has no color search goes deeper, if there is no active RGB color at all
              * then RGB::NONE is returned.
              */
