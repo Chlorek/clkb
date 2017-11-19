@@ -20,6 +20,8 @@
 namespace clkb {
     extern std::default_random_engine rng;
     
+    enum class LAYER : unsigned int { BACKGROUND = 0, FOREGROUND = 1 };
+    
     /*
      * Expects dest to be 7-bytes long, undefined behavior otherwise.
      * Resulting c-string is null-terminated.
@@ -44,60 +46,72 @@ namespace clkb {
             void nextFrame();
             
             /*
-             * Set background color (simply default for all keys)
+             * Set all colors of specified layer.
+             * Also sets background color if layer == LAYER::BACKGROUND
              */
-            void setColor(clkb::RGB color);
+            void setColor(clkb::RGB color, unsigned int layer = (unsigned int)LAYER::BACKGROUND);
             
             /*
              * Apply color to given list of keys
              */
-            void setColor(std::vector<KEY> keys, clkb::RGB color);
+            void setColor(std::vector<KEY> keys, clkb::RGB color, unsigned int layer = (unsigned int)LAYER::FOREGROUND);
             
             /*
              * Apply color to given list of keys
              */
-            void setColor(std::vector<KEY::INDEX_TYPE> keys, clkb::RGB color);
+            void setColor(std::vector<KEY::INDEX_TYPE> keys, clkb::RGB color, unsigned int layer = (unsigned int)LAYER::FOREGROUND);
             
             /*
              * Apply color to given key
              */
-            void setColor(KEY key, clkb::RGB color);
+            void setColor(KEY key, clkb::RGB color, unsigned int layer = (unsigned int)LAYER::FOREGROUND);
             
             /*
              * Apply color to given key
              */
-            void setColor(KEY::INDEX_TYPE key, clkb::RGB color);
+            void setColor(KEY::INDEX_TYPE key, clkb::RGB color, unsigned int layer = (unsigned int)LAYER::FOREGROUND);
             
             /*
-             * Removes color for given keys (background is used instead)
+             * Removes color for given keys (sets to RGB::NONE)
              */
-            void resetColor(std::vector<KEY> keys);
+            void resetColor(std::vector<KEY> keys, unsigned int layer = (unsigned int)LAYER::FOREGROUND);
             
             /*
-             * Removes color for given keys (background is used instead)
+             * Removes color for given keys (sets to RGB::NONE)
              */
-            void resetColor(std::vector<KEY::INDEX_TYPE> keys);
+            void resetColor(std::vector<KEY::INDEX_TYPE> keys, unsigned int layer = (unsigned int)LAYER::FOREGROUND);
             
             /*
-             * Removes color for given key (background is used instead)
+             * Removes color for given key (sets to RGB::NONE)
              */
-            void resetColor(KEY key);
+            void resetColor(KEY key, unsigned int layer = (unsigned int)LAYER::FOREGROUND);
             
             /*
-             * Removes color for given key (background is used instead)
+             * Removes color for given key (sets to RGB::NONE)
              */
-            void resetColor(KEY::INDEX_TYPE keys);
+            void resetColor(KEY::INDEX_TYPE key, unsigned int layer = (unsigned int)LAYER::FOREGROUND);
+            
+            /*
+             * If specified layer has no color search goes deeper, if there is no active RGB color at all
+             * then RGB::NONE is returned.
+             */
+            RGB getColor(KEY key, unsigned int layer = (unsigned int)LAYER::FOREGROUND);
+            
+            /*
+             * If specified layer has no color search goes deeper, if there is no active RGB color at all
+             * then RGB::NONE is returned.
+             */
+            RGB getColor(KEY::INDEX_TYPE key, unsigned int layer = (unsigned int)LAYER::FOREGROUND);
+            
+            /*
+             * Returns background color set with setColor(RGB) for background layer
+             */
+            RGB getBackgroundColor();
             
             /*
              * Applies effect, animation on keys
              */
             void apply(Effect* effect);
-            
-            RGB getColor(KEY key);
-            
-            RGB getColor(KEY::INDEX_TYPE key);
-            
-            RGB getBackgroundColor();
             
             /*
              * Returns list of connected devices
@@ -105,7 +119,10 @@ namespace clkb {
             static std::vector<DeviceInfo> getDevices();
         private:
             FileDevice* fd;
-            std::shared_ptr<RGB[]> colors; // pointer to array
+            /*
+             * First two layers are in order: background and foreground colormap.
+             */
+            std::vector<RGB*> colors;
             clkb::RGB bgcolor {0, 0, 0};
             
             // used frame-rate control and counting

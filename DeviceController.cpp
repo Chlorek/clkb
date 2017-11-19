@@ -16,30 +16,48 @@ namespace clkb {
     
     DeviceController::DeviceController(FileDevice* fd, unsigned char framerate)
         : fd(fd), timestep(1000/framerate), last_count(std::chrono::system_clock::now()) {
-        colors = std::shared_ptr<RGB[]>(new RGB[KEY::count]);
+        RGB* bg = new RGB[KEY::count];
+        RGB* fg = new RGB[KEY::count];
+        std::fill(bg, bg + KEY::count, RGB{255,0,0});
+        std::fill(fg, fg + KEY::count, RGB::NONE);
+        colors.push_back(bg); //background
+        colors.push_back(fg); //foreground
     }
 
-    DeviceController::DeviceController(const DeviceController& o) : fd(o.fd), colors(o.colors),
-            timestep(o.timestep), last_count(o.last_count), frames(o.frames), effects(o.effects) {
+    DeviceController::DeviceController(const DeviceController& o)
+        : fd(o.fd), timestep(o.timestep), last_count(o.last_count), frames(o.frames), effects(o.effects) {
+        for(RGB* orgLayer : o.colors) {
+            RGB* newLayer = new RGB[KEY::count];
+            std::memcpy(newLayer, orgLayer, KEY::count);
+            colors.push_back(newLayer);
+        }
     }
     
     DeviceController::~DeviceController() {
+        for(RGB* layer : colors)
+            delete[] layer;
     }
 
     void DeviceController::nextFrame() {
         // Apply effects
-        for(std::shared_ptr<Effect> e : effects)
-            e->tick(this);
+        for(unsigned int i = 0; i < effects.size(); ++i) {
+            effects[i]->layer = i+2;
+            effects[i]->tick(this);
+        }
         
         // Every command begins with rgb followed by main color
         std::string cmd("rgb");
         
         // Then per-key colors are applied
+        /*for(RGB* layer : colors)
+            for(KEY::INDEX_TYPE i = 0; i < KEY::count; ++i)
+                if(layer[i].active)
+                    cmd.append(" ").append(KEY::NAME[i]).append(":").append(rgbToHex(layer[i]));*/
         for(KEY::INDEX_TYPE i = 0; i < KEY::count; ++i)
-            cmd.append(" ").append(KEY::NAME[i]).append(":").append(rgbToHex(colors[i]));
+            cmd.append(" ").append(KEY::NAME[i]).append(":").append(rgbToHex(getColor(i, colors.size()-1)));
         
         // debug line
-        //std::cout << cmd << std::endl;
+        //std::cout << colors.size() << std::endl;
         
         // Finally write command to device
         if(fd->write(cmd) < cmd.length())
@@ -62,46 +80,56 @@ namespace clkb {
         std::this_thread::sleep_for(std::chrono::milliseconds(timestep));
     }
 
-    void DeviceController::setColor(clkb::RGB color) {
-        bgcolor = color;
+    void DeviceController::setColor(clkb::RGB color, unsigned int layer) {
+        if(layer == 0)
+            bgcolor = color;
         for(KEY::INDEX_TYPE i = 0; i < KEY::count; ++i)
-            setColor(i, color);
+            setColor(i, color, layer);
     }
     
-    void DeviceController::setColor(std::vector<KEY> keys, clkb::RGB color) {
+    void DeviceController::setColor(std::vector<KEY> keys, clkb::RGB color, unsigned int layer) {
         for(KEY key : keys)
-            colors[key.i] = color;
+            setColor(key.i, color, layer);
     }
     
-    void DeviceController::setColor(std::vector<KEY::INDEX_TYPE> keys, clkb::RGB color) {
+    void DeviceController::setColor(std::vector<KEY::INDEX_TYPE> keys, clkb::RGB color, unsigned int layer) {
         for(KEY::INDEX_TYPE key : keys)
-            colors[key] = color;
+            setColor(key, color, layer);
     }
     
-    void DeviceController::setColor(KEY key, clkb::RGB color) {
-        colors[key.i] = color;
+    void DeviceController::setColor(KEY key, clkb::RGB color, unsigned int layer) {
+        setColor(key.i, color, layer);
     }
     
-    void DeviceController::setColor(KEY::INDEX_TYPE key, clkb::RGB color) {
-        colors[key] = color;
+    void DeviceController::setColor(KEY::INDEX_TYPE key, clkb::RGB color, unsigned int layer) {
+        if(colors.size() > layer)
+            colors[layer][key] = color;
+        else {
+            RGB* newLayer = new RGB[KEY::count];
+            std::fill(newLayer, newLayer+KEY::count, RGB::NONE);
+            newLayer[key] = color;
+            colors.push_back(newLayer);
+        }
     }
     
-    void DeviceController::resetColor(std::vector<KEY> keys) {
+    void DeviceController::resetColor(std::vector<KEY> keys, unsigned int layer) {
         for(KEY key : keys)
-            colors[key.i] = bgcolor;
+            resetColor(key.i, layer);
     }
     
-    void DeviceController::resetColor(std::vector<KEY::INDEX_TYPE> keys) {
+    void DeviceController::resetColor(std::vector<KEY::INDEX_TYPE> keys, unsigned int layer) {
         for(KEY::INDEX_TYPE key : keys)
-            colors[key] = bgcolor;
+            resetColor(key, layer);
     }
-    
-    void DeviceController::resetColor(KEY key) {
-        colors[key.i] = bgcolor;
+
+    void DeviceController::resetColor(KEY key, unsigned int layer) {
+        if(colors.size() > layer)
+            colors[layer][key.i] = RGB::NONE;
     }
-    
-    void DeviceController::resetColor(KEY::INDEX_TYPE key) {
-        colors[key] = bgcolor;
+
+    void DeviceController::resetColor(KEY::INDEX_TYPE key, unsigned int layer) {
+        if(colors.size() > layer)
+            colors[layer][key] = RGB::NONE;
     }
     
     void DeviceController::apply(Effect* effect) {
@@ -109,14 +137,24 @@ namespace clkb {
         effects.push_back(sptr);
     }
     
-    RGB DeviceController::getColor(KEY key) {
-        return getColor(key.i);
+    RGB DeviceController::getColor(KEY key, unsigned int layer) {
+        return getColor(key.i, layer);
     }
             
-    RGB DeviceController::getColor(KEY::INDEX_TYPE key) {
+    RGB DeviceController::getColor(KEY::INDEX_TYPE key, unsigned int layer) {
+        // invalid values are reported inactive
         if(key >= KEY::count)
-            return {0,0,0};
-        return colors[key];
+            return RGB::NONE;
+        
+        if(layer >= colors.size())
+            layer = colors.size()-1;
+        
+        // find top-most layer with color
+        for(RGB color = colors[layer][key]; layer >= 0; --layer, color = colors[layer][key])
+            if(color.active)
+                return color;
+        
+        return RGB::NONE;
     }
     
     RGB DeviceController::getBackgroundColor() {

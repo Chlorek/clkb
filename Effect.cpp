@@ -9,10 +9,10 @@
 #include "DeviceController.hpp"
 
 namespace clkb {
-    Effect::Effect() {
+    Effect::Effect() : layer((unsigned int)LAYER::FOREGROUND) {
     }
 
-    Effect::Effect(const Effect& o) {
+    Effect::Effect(const Effect& o) : layer(o.layer) {
     }
 
     Effect::~Effect() {

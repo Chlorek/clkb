@@ -15,15 +15,17 @@ namespace clkb {
     class DeviceController;
     
     class Effect {
+        friend class DeviceController;
         public:
             Effect();
-            Effect(const Effect& orig);
+            Effect(const Effect& o);
             virtual ~Effect();
             
             virtual void tick(DeviceController* dvct) = 0;
             
             static RGB lerp(RGB a, RGB b, float weight);
         protected:
+            unsigned int layer;
     };
 }
 
