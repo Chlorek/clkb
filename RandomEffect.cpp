@@ -35,9 +35,9 @@ namespace clkb {
     void RandomEffect::render(DeviceController* dvct, float progress) {
         if(keys.size() > 0)
             for(auto k : keys)
-                dvct->setColor(k, Effect::lerp(from, to, progress));
+                dvct->setColor(k, Effect::lerp(from, to, progress), layer);
         else
-            dvct->setColor(Effect::lerp(from, to, progress));
+            dvct->setColor(Effect::lerp(from, to, progress), layer);
         
         if(progress == 1) {
             from = to;

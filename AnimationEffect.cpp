@@ -35,7 +35,7 @@ namespace clkb {
         for(unsigned int y = 0; y < frames[frameIndex]->TellHeight() && y < 6; ++y) {
             for(unsigned int x = 0; x < frames[frameIndex]->TellWidth() && x < 20; ++x) {
                 auto col = frames[frameIndex]->GetPixel(x, y);
-                dvct->setColor(KEY::keymap[y][x], {col.Red, col.Green, col.Blue});
+                dvct->setColor(KEY::keymap[y][x], {col.Red, col.Green, col.Blue}, layer);
             }
         }
     }

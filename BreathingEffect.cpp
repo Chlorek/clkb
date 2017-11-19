@@ -33,8 +33,8 @@ namespace clkb {
         RGB rgb {(RGB::TYPE)(col.r * progress), (RGB::TYPE)(col.g * progress), (RGB::TYPE)(col.b * progress)};
         if(keys.size() > 0)
             for(KEY k : keys)
-                dvct->setColor(k, rgb);
+                dvct->setColor(k, rgb, layer);
         else
-            dvct->setColor(rgb);
+            dvct->setColor(rgb, layer);
     }
 }
