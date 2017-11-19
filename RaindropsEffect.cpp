@@ -39,23 +39,26 @@ namespace clkb {
             else if(progress > 1)
                 progress = 1;
             //std::cout << progress << std::endl;
+            
+            std::vector<KEY> keys = KEY::fromKeymap((*i).x, (*i).y);
+            if(keys.size() > 0) {
+                RGB bg = dvct->getColor(keys[0], layer-1);
+                
+                RGB colInTime = {progress*color.r, progress*color.g, progress*color.b};
+                dvct->setColor(KEY::fromKeymap((*i).x, (*i).y), Effect::lerp(bg, colInTime, progress), layer);
+                progress *= 0.9;
+                colInTime = {progress*color.r, progress*color.g, progress*color.b};
 
-            RGB bg = dvct->getBackgroundColor();
-            RGB colInTime = {progress*color.r, progress*color.g, progress*color.b};
-            dvct->setColor(KEY::fromKeymap((*i).x, (*i).y), Effect::lerp(bg, colInTime, progress), layer);
-            progress *= 0.9;
-            colInTime = {progress*color.r, progress*color.g, progress*color.b};
-            
-            RGB around = Effect::lerp(bg, colInTime, progress);
-            dvct->setColor(KEY::fromKeymap((*i).x-1, (*i).y), around, layer);
-            dvct->setColor(KEY::fromKeymap((*i).x+1, (*i).y), around, layer);
-            dvct->setColor(KEY::fromKeymap((*i).x, (*i).y-1), around, layer);
-            dvct->setColor(KEY::fromKeymap((*i).x, (*i).y+1), around, layer);
-            dvct->setColor(KEY::fromKeymap((*i).x-1, (*i).y-1), around, layer);
-            dvct->setColor(KEY::fromKeymap((*i).x+1, (*i).y-1), around, layer);
-            dvct->setColor(KEY::fromKeymap((*i).x-1, (*i).y+1), around, layer);
-            dvct->setColor(KEY::fromKeymap((*i).x+1, (*i).y+1), around, layer);
-            
+                RGB around = Effect::lerp(bg, colInTime, progress);
+                dvct->setColor(KEY::fromKeymap((*i).x-1, (*i).y), around, layer);
+                dvct->setColor(KEY::fromKeymap((*i).x+1, (*i).y), around, layer);
+                dvct->setColor(KEY::fromKeymap((*i).x, (*i).y-1), around, layer);
+                dvct->setColor(KEY::fromKeymap((*i).x, (*i).y+1), around, layer);
+                dvct->setColor(KEY::fromKeymap((*i).x-1, (*i).y-1), around, layer);
+                dvct->setColor(KEY::fromKeymap((*i).x+1, (*i).y-1), around, layer);
+                dvct->setColor(KEY::fromKeymap((*i).x-1, (*i).y+1), around, layer);
+                dvct->setColor(KEY::fromKeymap((*i).x+1, (*i).y+1), around, layer);
+            }
             // remove drop
             if(diff == duration)
                 i = drops.erase(i);
