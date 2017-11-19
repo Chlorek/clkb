@@ -119,6 +119,7 @@ namespace clkb {
             static std::vector<DeviceInfo> getDevices();
         private:
             FileDevice* fd;
+            
             /*
              * First two layers are in order: background and foreground colormap.
              */

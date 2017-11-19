@@ -45,14 +45,10 @@ namespace clkb {
             effects[i]->tick(this);
         }
         
-        // Every command begins with rgb followed by main color
+        // Every command begins with rgb
         std::string cmd("rgb");
         
         // Then per-key colors are applied
-        /*for(RGB* layer : colors)
-            for(KEY::INDEX_TYPE i = 0; i < KEY::count; ++i)
-                if(layer[i].active)
-                    cmd.append(" ").append(KEY::NAME[i]).append(":").append(rgbToHex(layer[i]));*/
         for(KEY::INDEX_TYPE i = 0; i < KEY::count; ++i)
             cmd.append(" ").append(KEY::NAME[i]).append(":").append(rgbToHex(getColor(i, colors.size()-1)));
         
@@ -102,6 +98,9 @@ namespace clkb {
     }
     
     void DeviceController::setColor(KEY::INDEX_TYPE key, clkb::RGB color, unsigned int layer) {
+        if(layer == (unsigned int)LAYER::BACKGROUND)
+            bgcolor.active = false;
+        
         if(colors.size() > layer)
             colors[layer][key] = color;
         else {
