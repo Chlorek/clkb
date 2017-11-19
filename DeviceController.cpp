@@ -12,6 +12,8 @@
 #include <boost/algorithm/string.hpp>
 
 namespace clkb {
+    std::default_random_engine rng(std::chrono::system_clock::now().time_since_epoch().count());
+    
     DeviceController::DeviceController(FileDevice* fd, unsigned char framerate)
         : fd(fd), timestep(1000/framerate), last_count(std::chrono::system_clock::now()) {
         colors = std::shared_ptr<RGB[]>(new RGB[KEY::count]);

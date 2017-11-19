@@ -18,6 +18,8 @@
 #include <memory>
 
 namespace clkb {
+    extern std::default_random_engine rng;
+    
     /*
      * Expects dest to be 7-bytes long, undefined behavior otherwise.
      * Resulting c-string is null-terminated.

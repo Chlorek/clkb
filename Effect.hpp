@@ -24,7 +24,6 @@ namespace clkb {
             
             static RGB lerp(RGB a, RGB b, float weight);
         protected:
-            static std::default_random_engine rng;
     };
 }
 
