@@ -8,6 +8,8 @@
 #include "DataTypes.hpp"
 
 namespace clkb {
+    const RGB RGB::NONE {0,0,0, false};
+    
     KEY::INDEX_TYPE KEY::count = 0;
     std::vector<const char*> KEY::NAME(111);
 

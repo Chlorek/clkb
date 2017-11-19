@@ -17,16 +17,23 @@ namespace clkb {
      * Duration with milliseconds accuracy
      */
     typedef std::chrono::duration<int, std::chrono::milliseconds> time_duration;
+    
+    /*
+     * System-clock point in time
+     */
     typedef std::chrono::time_point<std::chrono::system_clock> time_point;
     
     struct RGB {
             typedef unsigned char TYPE;
             
-            /*RGB() = delete;
-            RGB(TYPE r, TYPE g, TYPE b) : r(r), g(g), b(b) {};
-            RGB(const RGB& o) : r(r), g(g), b(b) {};*/
-            
+            static const RGB NONE;
+
             TYPE r, g, b;
+            
+            /*
+             * Should this color be visible
+             */
+            bool active = true;
     };
     
     struct DeviceInfo {
