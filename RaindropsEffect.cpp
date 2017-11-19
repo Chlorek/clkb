@@ -38,27 +38,26 @@ namespace clkb {
                 progress = 0;
             else if(progress > 1)
                 progress = 1;
-            //std::cout << progress << std::endl;
             
-            std::vector<KEY> keys = KEY::fromKeymap((*i).x, (*i).y);
-            if(keys.size() > 0) {
-                RGB bg = dvct->getColor(keys[0], layer-1);
-                
-                RGB colInTime = {progress*color.r, progress*color.g, progress*color.b};
-                dvct->setColor(KEY::fromKeymap((*i).x, (*i).y), Effect::lerp(bg, colInTime, progress), layer);
-                progress *= 0.9;
-                colInTime = {progress*color.r, progress*color.g, progress*color.b};
-
-                RGB around = Effect::lerp(bg, colInTime, progress);
-                dvct->setColor(KEY::fromKeymap((*i).x-1, (*i).y), around, layer);
-                dvct->setColor(KEY::fromKeymap((*i).x+1, (*i).y), around, layer);
-                dvct->setColor(KEY::fromKeymap((*i).x, (*i).y-1), around, layer);
-                dvct->setColor(KEY::fromKeymap((*i).x, (*i).y+1), around, layer);
-                dvct->setColor(KEY::fromKeymap((*i).x-1, (*i).y-1), around, layer);
-                dvct->setColor(KEY::fromKeymap((*i).x+1, (*i).y-1), around, layer);
-                dvct->setColor(KEY::fromKeymap((*i).x-1, (*i).y+1), around, layer);
-                dvct->setColor(KEY::fromKeymap((*i).x+1, (*i).y+1), around, layer);
+            RGB colInTime = {progress*color.r, progress*color.g, progress*color.b};
+            
+            for(int x = -1; x <= 1; ++x) {
+                for(int y = -1; y <= 1; ++y) {
+                    std::vector<KEY> keys = KEY::fromKeymap((*i).x + x, (*i).y + y);
+                    for(KEY key : keys) {
+                        RGB bg = dvct->getColor(key, layer-1);
+                        /*if(x == 0 && y == 0)
+                            progress /= 2;
+                        else
+                            progress *= 2;*/
+                        if(dvct->getColor(key, layer).active)
+                            dvct->setColor(key, Effect::lerp(bg, Effect::lerp(dvct->getColor(key, layer), colInTime, progress), progress), layer);
+                        else
+                            dvct->setColor(key, Effect::lerp(bg, colInTime, progress), layer);
+                    }
+                }
             }
+            
             // remove drop
             if(diff == duration)
                 i = drops.erase(i);
