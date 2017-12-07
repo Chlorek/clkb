@@ -1,0 +1,22 @@
+#!/bin/bash
+vals=( "$@" )
+
+for i in "${vals[@]}"
+do
+    if [ "$i" -gt "255" ] || [ "$i" -lt "0" ]; then
+        echo "${i} is out of range"
+        exit
+    fi
+done
+
+for i in "${vals[@]}"
+do
+    # first remainder
+    fr="$(echo ${i}%16 | bc)"
+    a="$(echo ${i}/16 | bc)"
+    # second remainder
+    sr="$(echo ${a}%16 | bc)"
+    echo $sr $fr
+    pkill -RTMIN+$sr clkb
+    pkill -RTMIN+$fr clkb
+done
